@@ -1,9 +1,8 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Flurl;
 using HubSpot.NET.Api.Contact.Dto;
-using HubSpot.NET.Api.Shared;
 using HubSpot.NET.Core;
 using HubSpot.NET.Core.Abstracts;
 using HubSpot.NET.Core.Interfaces;
@@ -33,7 +32,7 @@ namespace HubSpot.NET.Api.Contact
             CreateOrUpdateContactTransportModel transport = new CreateOrUpdateContactTransportModel(entity);
             string path = GetRoute<ContactHubSpotModel>("contact");
 
-            return _client.Execute<ContactHubSpotModel, PropertyValuePairCollection>(path, transport.Properties, Method.POST);
+            return _client.Execute<ContactHubSpotModel, CreateOrUpdateContactTransportModel>(path, transport, Method.POST);
         }
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace HubSpot.NET.Api.Contact
             CreateOrUpdateContactTransportModel transport = new CreateOrUpdateContactTransportModel(entity);
             string path = GetRoute<ContactHubSpotModel>("contact", "createOrUpdate", "email", entity.Email);
 
-            return _client.Execute<ContactHubSpotModel, PropertyValuePairCollection>(path, transport.Properties, Method.POST);
+            return _client.Execute<ContactHubSpotModel, CreateOrUpdateContactTransportModel>(path, transport, Method.POST);
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace HubSpot.NET.Api.Contact
             CreateOrUpdateContactTransportModel transport = new CreateOrUpdateContactTransportModel(entity);
             string path = GetRoute<ContactHubSpotModel>("contact", "createOrUpdate", "email", originalEmail);
 
-            return _client.Execute<ContactHubSpotModel, PropertyValuePairCollection>(path, transport.Properties, Method.POST);
+            return _client.Execute<ContactHubSpotModel, CreateOrUpdateContactTransportModel>(path, transport, Method.POST);
         }
 
         /// <summary>
