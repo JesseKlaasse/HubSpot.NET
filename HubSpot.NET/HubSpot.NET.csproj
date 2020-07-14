@@ -12,8 +12,8 @@
     <PackageProjectUrl>https://github.com/hubspot-net/HubSpot.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hubspot-net/HubSpot.NET.git</RepositoryUrl>
     <PackageTags>hubspot api wrapper c# contact company deal engagement properties crm</PackageTags>
-    <PackageReleaseNotes>0.8.13</PackageReleaseNotes>
-    <PackageId>HubSpot.NET</PackageId>
+    <PackageReleaseNotes>0.8.13-beta.2</PackageReleaseNotes>
+    <PackageId>Indicia.HubSpot.NET</PackageId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>7.3</LangVersion>
