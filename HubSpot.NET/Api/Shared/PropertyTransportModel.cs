@@ -20,7 +20,7 @@
                 var memberAttrib = prop.GetCustomAttribute(typeof(DataMemberAttribute)) as DataMemberAttribute;
                 object value = prop.GetValue(model);
 
-                if (value == null || memberAttrib == null)                
+                if (value == null || memberAttrib == null || memberAttrib.Name == "properties")                
                     continue;                
 
                 if (prop.PropertyType.IsArray && typeof(PropertyValuePair).IsAssignableFrom(prop.PropertyType.GetElementType()))

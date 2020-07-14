@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.8.13</Version>
+    <Version>0.8.13-beta.3</Version>
     <Authors>HubSpot.NET</Authors>
     <Company>HubSpot.NET</Company>
     <Description>C# .NET client library targeting the HubSpot APIs.</Description>
@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/hubspot-net/HubSpot.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hubspot-net/HubSpot.NET.git</RepositoryUrl>
     <PackageTags>hubspot api wrapper c# contact company deal engagement properties crm</PackageTags>
-    <PackageReleaseNotes>0.8.13-beta.2</PackageReleaseNotes>
+    <PackageReleaseNotes>0.8.13</PackageReleaseNotes>
     <PackageId>Indicia.HubSpot.NET</PackageId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
