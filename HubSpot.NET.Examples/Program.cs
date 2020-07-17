@@ -1,4 +1,6 @@
-﻿namespace HubSpot.NET.Examples
+﻿using System.Threading.Tasks;
+
+namespace HubSpot.NET.Examples
 {
     using HubSpot.NET.Core;
     using System;
@@ -7,7 +9,7 @@
     public class Examples
     {
         // enable args to be presented from CLI for automated test execution 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             /**
              * Initialize the API with your API Key
@@ -96,19 +98,19 @@
             var key = Console.ReadKey();
         }
 
-        private static void RunApiKeyExamples(HubSpotApi hapiApi)
+        private static async Task RunApiKeyExamples(HubSpotApi hapiApi)
         {
             //EmailSubscriptions.Example(hapiApi);
             //Deals.Example(hapiApi);
-            Contacts.Example(hapiApi);
+            await Contacts.Example(hapiApi);
             //Companies.Example(hapiApi);
             //CompanyProperties.Example(hapiApi);
         }
 
-        private static void RunOAuthExamples(HubSpotApi oauthApi)
+        private static async Task RunOAuthExamples(HubSpotApi oauthApi)
         {
-            OAuth.Example(oauthApi);
-            Timeline.Example(oauthApi);
+            await OAuth.Example(oauthApi);
+            await Timeline.Example(oauthApi);
         }
 
         private static string GetContactString() 

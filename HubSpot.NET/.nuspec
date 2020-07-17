@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
      <metadata>
           <id>Indicia.HubSpot.NET</id>
-          <version>0.8.13-beta.2</version>
+          <version>0.8.13-beta.4</version>
           <description>C# .NET client library targetting the HubSpot APIs</description>
           <authors>David Clarke, Turner Bass</authors>
           <dependencies>

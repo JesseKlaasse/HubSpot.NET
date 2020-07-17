@@ -1,13 +1,16 @@
-﻿namespace HubSpot.NET.Core.Interfaces
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace HubSpot.NET.Core.Interfaces
 {
     using HubSpot.NET.Api.Contact.Dto;
     using System.Collections.Generic;
 
     public interface IHubSpotContactPropertyApi
     {
-        ContactPropertyModel CreateProperty(ContactPropertyModel entity);
-        List<ContactPropertyModel> GetProperties();
-        ContactPropertyModel GetProperty(string propertyName);
-        ContactPropertyModel UpdateProperty(ContactPropertyModel model);
+        Task<ContactPropertyModel> CreatePropertyAsync(ContactPropertyModel entity, CancellationToken cancellationToken = default);
+        Task<List<ContactPropertyModel>> GetPropertiesAsync(CancellationToken cancellationToken = default);
+        Task<ContactPropertyModel> GetPropertyAsync(string propertyName, CancellationToken cancellationToken = default);
+        Task<ContactPropertyModel> UpdatePropertyAsync(ContactPropertyModel model, CancellationToken cancellationToken = default);
     }
 }

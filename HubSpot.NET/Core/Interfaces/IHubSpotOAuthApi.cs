@@ -1,11 +1,14 @@
-﻿namespace HubSpot.NET.Core.Interfaces
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace HubSpot.NET.Core.Interfaces
 {
     using HubSpot.NET.Api.OAuth.Dto;
 
     public interface IHubSpotOAuthApi
     {
-        HubSpotToken Authorize(string redirectCode, string redirectUri);
-        HubSpotToken Refresh(string redirectUri, HubSpotToken token);
-        void UpdateCredentials(string id, string secret);
+        Task<HubSpotToken> AuthorizeAsync(string redirectCode, string redirectUri, CancellationToken cancellationToken = default);
+        Task<HubSpotToken> RefreshAsync(string redirectUri, HubSpotToken token, CancellationToken cancellationToken = default);
+        Task UpdateCredentialsAsync(string id, string secret, CancellationToken cancellationToken = default);
     }
 }

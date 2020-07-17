@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Flurl;
 using HubSpot.NET.Api.Deal.Dto;
 using HubSpot.NET.Api.Shared;
@@ -28,12 +30,12 @@ namespace HubSpot.NET.Api.Deal
         /// <typeparam name="T">Implementation of DealHubSpotModel</typeparam>
         /// <param name="entity">The entity</param>
         /// <returns>The created entity (with ID set)</returns>
-        public DealHubSpotModel Create(DealHubSpotModel entity)
+        public Task<DealHubSpotModel> CreateAsync(DealHubSpotModel entity, CancellationToken cancellationToken = default)
         {
             NameTransportModel<DealHubSpotModel> model = new NameTransportModel<DealHubSpotModel>();
             model.ToPropertyTransportModel(entity);
 
-            return _client.Execute<DealHubSpotModel,NameTransportModel<DealHubSpotModel>>(GetRoute<DealHubSpotModel>(), model, Method.POST);
+            return _client.ExecuteAsync<DealHubSpotModel,NameTransportModel<DealHubSpotModel>>(GetRoute<DealHubSpotModel>(), model, Method.POST, cancellationToken);
         }
 
         /// <summary>
@@ -42,8 +44,8 @@ namespace HubSpot.NET.Api.Deal
         /// <param name="dealId">ID of the deal</param>
         /// <typeparam name="T">Implementation of DealHubSpotModel</typeparam>
         /// <returns>The deal entity</returns>
-        public DealHubSpotModel GetById(long dealId) 
-            => _client.Execute<DealHubSpotModel>(GetRoute<DealHubSpotModel>(dealId.ToString()));
+        public Task<DealHubSpotModel> GetByIdAsync(long dealId, CancellationToken cancellationToken = default) 
+            => _client.ExecuteAsync<DealHubSpotModel>(GetRoute<DealHubSpotModel>(dealId.ToString()), cancellationToken: cancellationToken);
 
         /// <summary>
         /// Updates a given deal
@@ -51,12 +53,12 @@ namespace HubSpot.NET.Api.Deal
         /// <typeparam name="T">Implementation of DealHubSpotModel</typeparam>
         /// <param name="entity">The deal entity</param>
         /// <returns>The updated deal entity</returns>
-        public DealHubSpotModel Update(DealHubSpotModel entity)
+        public Task<DealHubSpotModel> UpdateAsync(DealHubSpotModel entity, CancellationToken cancellationToken = default)
         {
             if (entity.Id < 1)            
                 throw new ArgumentException("Deal entity must have an id set!");
 
-            return _client.Execute<DealHubSpotModel, DealHubSpotModel>(GetRoute<DealHubSpotModel>(entity.Id.ToString()), entity, method: Method.PUT);            
+            return _client.ExecuteAsync<DealHubSpotModel, DealHubSpotModel>(GetRoute<DealHubSpotModel>(entity.Id.ToString()), entity, method: Method.PUT, cancellationToken: cancellationToken);            
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace HubSpot.NET.Api.Deal
         /// <typeparam name="T">Implementation of DealListHubSpotModel</typeparam>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of deals</returns>
-        public DealListHubSpotModel<DealHubSpotModel> List(bool includeAssociations, ListRequestOptions opts = null)
+        public Task<DealListHubSpotModel<DealHubSpotModel>> ListAsync(bool includeAssociations, ListRequestOptions opts = null, CancellationToken cancellationToken = default)
         {
             opts = opts ?? new ListRequestOptions(250);         
 
@@ -80,7 +82,7 @@ namespace HubSpot.NET.Api.Deal
             if (opts.PropertiesToInclude.Any())            
                 path = path.SetQueryParam("properties", opts.PropertiesToInclude);           
 
-            return _client.Execute<DealListHubSpotModel<DealHubSpotModel>, ListRequestOptions>(path, opts);
+            return _client.ExecuteAsync<DealListHubSpotModel<DealHubSpotModel>, ListRequestOptions>(path, opts, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace HubSpot.NET.Api.Deal
         /// <param name="objectName">String name of Hubspot object related to deals (contact\account)</param>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of deals</returns>
-        public DealListHubSpotModel<DealHubSpotModel> ListAssociated(bool includeAssociations, long hubId, ListRequestOptions opts = null, string objectName = "contact")
+        public Task<DealListHubSpotModel<DealHubSpotModel>> ListAssociatedAsync(bool includeAssociations, long hubId, ListRequestOptions opts = null, string objectName = "contact", CancellationToken cancellationToken = default)
         {
             opts = opts ?? new ListRequestOptions();            
 
@@ -108,15 +110,15 @@ namespace HubSpot.NET.Api.Deal
             if (opts.PropertiesToInclude.Any())            
                 path = path.SetQueryParam("properties", opts.PropertiesToInclude);            
 
-            return _client.Execute<DealListHubSpotModel<DealHubSpotModel>, ListRequestOptions>(path, opts);
+            return _client.ExecuteAsync<DealListHubSpotModel<DealHubSpotModel>, ListRequestOptions>(path, opts, cancellationToken: cancellationToken);
         }
 
         /// <summary>
         /// Deletes a given deal (by ID)
         /// </summary>
         /// <param name="dealId">ID of the deal</param>
-        public void Delete(long dealId) 
-            => _client.ExecuteOnly(GetRoute<DealHubSpotModel>(dealId.ToString()), method: Method.DELETE);
+        public Task DeleteAsync(long dealId, CancellationToken cancellationToken = default) 
+            => _client.ExecuteOnlyAsync(GetRoute<DealHubSpotModel>(dealId.ToString()), method: Method.DELETE, cancellationToken: cancellationToken);
 
         /// <summary>
         /// Gets a list of recently created deals
@@ -124,7 +126,7 @@ namespace HubSpot.NET.Api.Deal
         /// <typeparam name="T">Implementation of DealListHubSpotModel</typeparam>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of deals</returns>
-        public DealRecentListHubSpotModel<DealHubSpotModel> RecentlyCreated(DealRecentRequestOptions opts = null)
+        public Task<DealRecentListHubSpotModel<DealHubSpotModel>> RecentlyCreatedAsync(DealRecentRequestOptions opts = null, CancellationToken cancellationToken = default)
         {
             opts = opts ?? new DealRecentRequestOptions();            
 
@@ -140,7 +142,7 @@ namespace HubSpot.NET.Api.Deal
             if (!string.IsNullOrEmpty(opts.Since))            
                 path = path.SetQueryParam("since", opts.Since);            
 
-            return _client.Execute<DealRecentListHubSpotModel<DealHubSpotModel>, DealRecentRequestOptions>(path, opts);            
+            return _client.ExecuteAsync<DealRecentListHubSpotModel<DealHubSpotModel>, DealRecentRequestOptions>(path, opts, cancellationToken: cancellationToken);            
         }
 
         /// <summary>
@@ -149,7 +151,7 @@ namespace HubSpot.NET.Api.Deal
         /// <typeparam name="T">Implementation of DealListHubSpotModel</typeparam>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of deals</returns>
-        public DealRecentListHubSpotModel<DealHubSpotModel> RecentlyUpdated(DealRecentRequestOptions opts = null)
+        public Task<DealRecentListHubSpotModel<DealHubSpotModel>> RecentlyUpdatedAsync(DealRecentRequestOptions opts = null, CancellationToken cancellationToken = default)
         {
             opts = opts ?? new DealRecentRequestOptions();            
 
@@ -165,7 +167,7 @@ namespace HubSpot.NET.Api.Deal
             if (!string.IsNullOrEmpty(opts.Since))             
                 path = path.SetQueryParam("since", opts.Since);
 
-            return _client.Execute<DealRecentListHubSpotModel<DealHubSpotModel>, DealRecentRequestOptions>(path, opts);
+            return _client.ExecuteAsync<DealRecentListHubSpotModel<DealHubSpotModel>, DealRecentRequestOptions>(path, opts, cancellationToken: cancellationToken);
         }
     }
 }
