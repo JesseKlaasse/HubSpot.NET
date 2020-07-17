@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace HubSpot.NET.Core
 {
     using HubSpot.NET.Api.OAuth.Dto;
@@ -38,22 +41,22 @@ namespace HubSpot.NET.Core
             AppId = appId;
         }
 
-        public T Execute<T>(string path, Method method = Method.GET) where T : new() 
-            => SendReceiveRequest<T>(path, method);
+        public Task<T> ExecuteAsync<T>(string path, Method method = Method.GET, CancellationToken cancellationToken = default) where T : new() 
+            => SendReceiveRequestAsync<T>(path, method, cancellationToken);
 
-        public T Execute<T, K>(string absoluteUriPath, K entity, Method method = Method.GET) where T : new() 
-            => SendReceiveRequest<T, K>(absoluteUriPath, method, entity);
+        public Task<T> ExecuteAsync<T, K>(string absoluteUriPath, K entity, Method method = Method.GET, CancellationToken cancellationToken = default) where T : new() 
+            => SendReceiveRequestAsync<T, K>(absoluteUriPath, method, entity, cancellationToken);
 
-        public void ExecuteOnly(string absoluteUriPath, Method method = Method.GET) 
-            => SendOnlyRequest(absoluteUriPath, method);
+        public Task ExecuteOnlyAsync(string absoluteUriPath, Method method = Method.GET, CancellationToken cancellationToken = default) 
+            => SendOnlyRequestAsync(absoluteUriPath, method, cancellationToken);
 
-        public void ExecuteOnly<T>(string absoluteUriPath, T entity, Method method = Method.GET) 
-            => SendOnlyRequest(absoluteUriPath, method, entity);
+        public Task ExecuteOnlyAsync<T>(string absoluteUriPath, T entity, Method method = Method.GET, CancellationToken cancellationToken = default) 
+            => SendOnlyRequestAsync(absoluteUriPath, method, entity, cancellationToken);
 
-        public void ExecuteBatch(string absoluteUriPath, List<object> entities, Method method = Method.GET) 
-            => SendOnlyRequest(absoluteUriPath, method, entities);
+        public Task ExecuteBatchAsync(string absoluteUriPath, IEnumerable<object> entities, Method method = Method.GET, CancellationToken cancellationToken = default) 
+            => SendOnlyRequestAsync(absoluteUriPath, method, entities, cancellationToken);
 
-        public T ExecuteMultipart<T>(string absoluteUriPath, byte[] data, string filename, Dictionary<string,string> parameters, Method method = Method.POST)
+        public async Task<T> ExecuteMultipartAsync<T>(string absoluteUriPath, byte[] data, string filename, Dictionary<string,string> parameters, Method method = Method.POST, CancellationToken cancellationToken = default)
         {
             var fullUrl = $"{_baseUrl}{absoluteUriPath}";
             var request = ConfigureRequestAuthentication(fullUrl, method);
@@ -65,7 +68,7 @@ namespace HubSpot.NET.Core
                 request.AddParameter(kvp.Key, kvp.Value);
             }
 
-            var response = _client.Execute(request);
+            var response = await _client.ExecuteTaskAsync(request, cancellationToken);
             if (!response.IsSuccessful)
                 throw new HubSpotException("Error from HubSpot", response.Content); // lettuce get some good exception info back
 
@@ -76,8 +79,11 @@ namespace HubSpot.NET.Core
         /// Updates the OAuth token used by the client.
         /// </summary>
         /// <param name="token"></param>
-        public void UpdateToken(HubSpotToken token) 
-            => _token = token;
+        public Task UpdateTokenAsync(HubSpotToken token, CancellationToken cancellationToken = default)
+        {
+            _token = token;
+            return Task.CompletedTask;
+        }
 
         #region 'private methods'
         /// <summary>
@@ -87,10 +93,10 @@ namespace HubSpot.NET.Core
         /// <param name="path">The path to the endpoint.</param>
         /// <param name="method">The REST method used.</param>
         /// <returns>An entity of type T returned from the request.</returns>
-        private T SendReceiveRequest<T>(string path, Method method) where T : new()
+        private async Task<T> SendReceiveRequestAsync<T>(string path, Method method, CancellationToken cancellationToken = default) where T : new()
         {
             RestRequest request = ConfigureRequestAuthentication(path, method);
-            IRestResponse<T> response = _client.Execute<T>(request);
+            IRestResponse<T> response = await _client.ExecuteTaskAsync<T>(request, cancellationToken);
 
             if (response.IsSuccessful == false)
                 throw new HubSpotException("Error from HubSpot", new HubSpotError(response.StatusCode, response.StatusDescription), response.Content);
@@ -107,15 +113,16 @@ namespace HubSpot.NET.Core
         /// <param name="method">The REST method used.</param>
         /// <param name="entity">The entity being sent in the request.</param>
         /// <returns>An entity of type T returned from the request.</returns>
-        private T SendReceiveRequest<T,K>(string path, Method method, K entity) where T: new()
+        private async Task<T> SendReceiveRequestAsync<T,K>(string path, Method method, K entity, CancellationToken cancellationToken = default) where T: new()
         {
             RestRequest request = ConfigureRequestAuthentication(path, method);
            
             if(entity != null)
                 request.AddJsonBody(entity);
             
+            //var body = request.JsonSerializer.Serialize(entity); // uncomment this for body debugging
 
-            IRestResponse<T> response = _client.Execute<T>(request);
+            IRestResponse<T> response = await _client.ExecuteTaskAsync<T>(request, cancellationToken);
 
             if (response.IsSuccessful == false)
                 throw new HubSpotException("Error from HubSpot", new HubSpotError(response.StatusCode, response.StatusDescription), response.Content);
@@ -131,7 +138,7 @@ namespace HubSpot.NET.Core
         /// <param name="path">The endpoint target.</param>
         /// <param name="method">The REST method to use.</param>
         /// <param name="entity">The entity being sent to the endpoint.</param>
-        private void SendOnlyRequest<T>(string path, Method method, T entity)
+        private async Task SendOnlyRequestAsync<T>(string path, Method method, T entity, CancellationToken cancellationToken = default)
         {
 
             RestRequest request = ConfigureRequestAuthentication(path, method);
@@ -139,7 +146,9 @@ namespace HubSpot.NET.Core
             if (entity != null)
                 request.AddJsonBody(entity);
 
-            IRestResponse response = _client.Execute(request);
+            //var body = request.JsonSerializer.Serialize(entity); // uncomment this for body debugging
+
+            IRestResponse response = await _client.ExecuteTaskAsync(request, cancellationToken);
 
             if (!response.IsSuccessful)
                 throw new HubSpotException("Error from HubSpot", new HubSpotError(response.StatusCode, response.StatusDescription), response.Content);
@@ -150,12 +159,12 @@ namespace HubSpot.NET.Core
         /// </summary>
         /// <param name="path">The endpoint target.</param>
         /// <param name="method">The REST method to use.</param>
-        private void SendOnlyRequest(string path, Method method)
+        private async Task SendOnlyRequestAsync(string path, Method method, CancellationToken cancellationToken = default)
         {
 
             RestRequest request = ConfigureRequestAuthentication(path, method);
 
-            IRestResponse response = _client.Execute(request);
+            IRestResponse response = await _client.ExecuteTaskAsync(request, cancellationToken);
 
             if (!response.IsSuccessful)
                 throw new HubSpotException("Error from HubSpot", new HubSpotError(response.StatusCode, response.StatusDescription), response.Content);
@@ -180,7 +189,7 @@ namespace HubSpot.NET.Core
                     break;
             }
 
-            request.JsonSerializer = new NewtonsoftRestSharpSerializer();            
+            request.JsonSerializer = new NewtonsoftRestSharpSerializer();  
             return request;
         }
 

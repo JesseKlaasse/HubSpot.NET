@@ -1,4 +1,7 @@
-﻿namespace HubSpot.NET.Api.Shared
+﻿using System;
+using Newtonsoft.Json;
+
+namespace HubSpot.NET.Api.Shared
 {
     using HubSpot.NET.Api.Contact.Dto;
     using System.Collections.Generic;
@@ -11,7 +14,7 @@
         [DataMember(Name = "properties")]
         public PropertyValuePairCollection Properties { get; set; } = new PropertyValuePairCollection();
         
-        public void ToPropertyTransportModel(T model)
+        public virtual void ToPropertyTransportModel(T model)
         {
             PropertyInfo[] properties = model.GetType().GetProperties();
 
@@ -21,7 +24,7 @@
                 object value = prop.GetValue(model);
 
                 if (value == null || memberAttrib == null || memberAttrib.Name == "properties")                
-                    continue;                
+                    continue;
 
                 if (prop.PropertyType.IsArray && typeof(PropertyValuePair).IsAssignableFrom(prop.PropertyType.GetElementType()))
                 {
@@ -42,7 +45,7 @@
                     continue;
                 }
 
-                Properties.Add(new PropertyValuePair(memberAttrib.Name, value.ToString()));
+                Properties.Add(new PropertyValuePair(memberAttrib.Name, value));
             }
         }
 
@@ -61,4 +64,5 @@
             }
         }
     }
+
 }

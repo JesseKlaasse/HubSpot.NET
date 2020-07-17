@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using HubSpot.NET.Api.Owner.Dto;
 using HubSpot.NET.Core.Abstracts;
 using HubSpot.NET.Core.Interfaces;
@@ -18,7 +20,7 @@ namespace HubSpot.NET.Api.Owner
         /// Gets all owners within your HubSpot account
         /// </summary>
         /// <returns>The set of owners</returns>
-        public OwnerListHubSpotModel<T> GetAll<T>() where T : OwnerHubSpotModel
-            => _client.Execute<OwnerListHubSpotModel<T>>(GetRoute<T>("owners"));
+        public Task<OwnerListHubSpotModel<T>> GetAllAsync<T>(CancellationToken cancellationToken = default) where T : OwnerHubSpotModel
+            => _client.ExecuteAsync<OwnerListHubSpotModel<T>>(GetRoute<T>("owners"), cancellationToken: cancellationToken);
     }
 }

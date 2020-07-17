@@ -1,4 +1,6 @@
-﻿namespace HubSpot.NET.Core.Interfaces
+﻿using System.Threading;
+
+namespace HubSpot.NET.Core.Interfaces
 {
     using HubSpot.NET.Api.Timeline.Dto;
     using System;
@@ -10,12 +12,12 @@
     public interface IHubSpotTimelineApi
     {
 
-        void CreateOrUpdateEvent(TimelineEventHubSpotModel entity);
-        void CreateEventType(TimelineEventTypeHubSpotModel entity);
-        void DeleteEventType(long entityID);
-        void UpdateEventType(TimelineEventTypeHubSpotModel entity);
-        TimelineEventHubSpotModel GetEventById(long entityID);
+        Task CreateOrUpdateEventAsync(TimelineEventHubSpotModel entity, CancellationToken cancellationToken = default);
+        Task CreateEventTypeAsync(TimelineEventTypeHubSpotModel entity, CancellationToken cancellationToken = default);
+        Task DeleteEventTypeAsync(long entityID, CancellationToken cancellationToken = default);
+        Task UpdateEventTypeAsync(TimelineEventTypeHubSpotModel entity, CancellationToken cancellationToken = default);
+        Task<TimelineEventHubSpotModel> GetEventByIdAsync(long entityID, CancellationToken cancellationToken = default);
         //TimelineEventTypeHubSpotModel GetEventTypeById(long entityID);
-        IEnumerable<TimelineEventTypeHubSpotModel> GetAllEventTypes();
+        Task<List<TimelineEventTypeHubSpotModel>> GetAllEventTypesAsync(CancellationToken cancellationToken = default);
     }
 }

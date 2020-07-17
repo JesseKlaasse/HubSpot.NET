@@ -2,16 +2,18 @@
 using HubSpot.NET.Api.Company.Dto;
 using HubSpot.NET.Core;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HubSpot.NET.Examples
 {
     public class Companies
     {
-        public static void Example(HubSpotApi api)
+        public static async Task Example(HubSpotApi api, CancellationToken cancellationToken = default)
         {
             try
             {
-                Tests(api);
+                await Tests(api, cancellationToken);
                 Console.WriteLine("Companies example completed successfully.");
             }
             catch(Exception ex)
@@ -22,36 +24,36 @@ namespace HubSpot.NET.Examples
            
         }
 
-        private static void Tests(HubSpotApi api)
+        private static async Task Tests(HubSpotApi api, CancellationToken cancellationToken = default)
         {
             /**
             * Create a company
             */
-            var company = api.Company.Create(new CompanyHubSpotModel()
+            var company = await api.Company.CreateAsync(new CompanyHubSpotModel()
             {
                 Domain = "squaredup.com",
                 Name = "Squared Up"
-            });
+            }, cancellationToken);
 
             /**
              * Update a company's property
              */
             company.Description = "Data Visualization for Enterprise IT";
-            api.Company.Update(company);
+            await api.Company.UpdateAsync(company, cancellationToken);
 
 
             /**
              * Get all companies with domain name "squaredup.com"
              */
-            var companies = api.Company.GetByDomain("squaredup.com", new CompanySearchByDomain()
+            var companies = await api.Company.GetByDomainAsync("squaredup.com", new CompanySearchByDomain()
             {
                 Limit = 10
-            });
+            }, cancellationToken);
 
             /**
              * Delete a contact
              */
-            api.Company.Delete(company.Id.Value);
+            await api.Company.DeleteAsync(company.Id.Value, cancellationToken);
 
         }
     }

@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using HubSpot.NET.Core;
 
 namespace HubSpot.NET.Examples
 {
     public class EmailSubscriptions
     {
-        public static void Example(HubSpotApi api)
+        public static async Task Example(HubSpotApi api, CancellationToken cancellationToken = default)
         {
             try
             {
-                Tests(api);
+                await Tests(api, cancellationToken);
                 Console.WriteLine("Email Subscriptions tests passed.");
             }
             catch(Exception ex)
@@ -20,12 +22,12 @@ namespace HubSpot.NET.Examples
             }
         }
 
-        private static void Tests(HubSpotApi api)
+        private static async Task Tests(HubSpotApi api, CancellationToken cancellationToken = default)
         {
            /**
              * Get the available subscription types
              */
-            var all = api.EmailSubscriptions.GetSubscriptionTypes();
+            var all = await api.EmailSubscriptions.GetSubscriptionTypesAsync(cancellationToken);
 
             /**
              * Get the subscription statuses for the given email address
@@ -47,7 +49,7 @@ namespace HubSpot.NET.Examples
             var type = all.Types.First();
            // api.EmailSubscriptions.UnsubscribeFrom("dan@squaredup.com", type.Id);
 
-            api.EmailSubscriptions.SubscribeTo("dev@vtrpro.com", type.Id);
+            await api.EmailSubscriptions.SubscribeToAsync("dev@vtrpro.com", type.Id, cancellationToken);
         }
     }
 }

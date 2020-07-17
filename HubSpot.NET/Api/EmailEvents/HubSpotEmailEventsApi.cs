@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Flurl;
 using HubSpot.NET.Api.EmailEvents.Dto;
@@ -27,11 +28,11 @@ namespace HubSpot.NET.Api.EmailEvents
         /// <param name="appId">The app ID to query.</param>
         /// <typeparam name="T">Implementation of EmailCampaignDataHubSpotModel</typeparam>
         /// <returns>The xcampaign data entity</returns>
-        public T GetCampaignDataById<T>(long campaignId, long appId) where T : EmailCampaignDataHubSpotModel, new()
+        public Task<T> GetCampaignDataByIdAsync<T>(long campaignId, long appId, CancellationToken cancellationToken = default) where T : EmailCampaignDataHubSpotModel, new()
         {
             var path = $"{(new T()).RouteBasePath}/{campaignId}"
                 .SetQueryParam("appId", appId);
-            var data = _client.Execute<T>(path, Method.GET);
+            var data = _client.ExecuteAsync<T>(path, Method.GET, cancellationToken);
             return data;
         }
 
@@ -41,7 +42,7 @@ namespace HubSpot.NET.Api.EmailEvents
         /// <typeparam name="T">Implementation of EmailCampaignHubSpotModel</typeparam>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of email campaigns</returns>
-        public EmailCampaignListHubSpotModel<T> ListCampaigns<T>(EmailCampaignListRequestOptions opts = null) where T : EmailCampaignHubSpotModel, new()
+        public Task<EmailCampaignListHubSpotModel<T>> ListCampaignsAsync<T>(EmailCampaignListRequestOptions opts = null, CancellationToken cancellationToken = default) where T : EmailCampaignHubSpotModel, new()
         {
             if (opts == null)
             {
@@ -56,7 +57,7 @@ namespace HubSpot.NET.Api.EmailEvents
                 path = path.SetQueryParam("offset", opts.Offset);
             }
 
-            var data = _client.Execute<EmailCampaignListHubSpotModel<T>>(path);
+            var data = _client.ExecuteAsync<EmailCampaignListHubSpotModel<T>>(path, cancellationToken: cancellationToken);
 
             return data;
         }
@@ -67,7 +68,7 @@ namespace HubSpot.NET.Api.EmailEvents
         /// <typeparam name="T">Implementation of EmailCampaignHubSpotModel</typeparam>
         /// <param name="opts">Options (limit, offset) relating to request</param>
         /// <returns>List of email campaigns</returns>
-        public EmailCampaignListHubSpotModel<T> RecentlyUpdatedCampaigns<T>(EmailCampaignListRequestOptions opts = null) where T : EmailCampaignHubSpotModel, new()
+        public Task<EmailCampaignListHubSpotModel<T>> RecentlyUpdatedCampaignsAsync<T>(EmailCampaignListRequestOptions opts = null, CancellationToken cancellationToken = default) where T : EmailCampaignHubSpotModel, new()
         {
             if (opts == null)
             {
@@ -82,7 +83,7 @@ namespace HubSpot.NET.Api.EmailEvents
                 path = path.SetQueryParam("offset", opts.Offset);
             }
 
-            var data = _client.Execute<EmailCampaignListHubSpotModel<T>>(path);
+            var data = _client.ExecuteAsync<EmailCampaignListHubSpotModel<T>>(path, cancellationToken: cancellationToken);
 
             return data;
         }

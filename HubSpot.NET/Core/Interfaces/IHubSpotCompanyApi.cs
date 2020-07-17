@@ -1,4 +1,6 @@
-﻿using HubSpot.NET.Api.Company;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using HubSpot.NET.Api.Company;
 using HubSpot.NET.Api.Company.Dto;
 
 namespace HubSpot.NET.Core.Interfaces
@@ -9,7 +11,7 @@ namespace HubSpot.NET.Core.Interfaces
     public interface IHubSpotCompanyApi<T> : ICRUDable<T>
         where T : IHubSpotModel
     {
-        CompanySearchResultModel<T> GetByDomain(string domain, CompanySearchByDomain options = null);
-        CompanyListHubSpotModel<T> List(ListRequestOptions opts = null);
+        Task<CompanySearchResultModel<T>> GetByDomainAsync(string domain, CompanySearchByDomain options = null, CancellationToken cancellationToken = default);
+        Task<CompanyListHubSpotModel<T>> ListAsync(ListRequestOptions opts = null, CancellationToken cancellationToken = default);
     }
 }

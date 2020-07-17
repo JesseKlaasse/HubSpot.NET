@@ -1,12 +1,15 @@
-﻿namespace HubSpot.NET.Examples
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace HubSpot.NET.Examples
 {
     using HubSpot.NET.Core;
 
     public class OAuth
     {
-        public static void Example(HubSpotApi hubspot, string redirectCode = "", string redirectUri = "")
+        public static async Task Example(HubSpotApi hubspot, string redirectCode = "", string redirectUri = "", CancellationToken cancellationToken = default)
         {
-            var token = hubspot.OAuth.Authorize(redirectCode, redirectUri);
+            var token = await hubspot.OAuth.AuthorizeAsync(redirectCode, redirectUri, cancellationToken);
         }
     }
 }

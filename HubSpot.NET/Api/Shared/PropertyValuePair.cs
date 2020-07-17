@@ -6,7 +6,7 @@
     public class PropertyValuePair
     {
         public PropertyValuePair() { }
-        public PropertyValuePair(string prop, string value) : this()
+        public PropertyValuePair(string prop, object value) : this()
         {
             Property = prop;
             Value = value;
@@ -16,7 +16,7 @@
         public string Property { get; set; }
 
         [DataMember(Name = "value")]
-        public string Value { get; set; }
+        public object Value { get; set; } // This is an object to let the (de)serializer take care of the correct formats
 
         public override string ToString() => $"{Property}: {Value}";
     }

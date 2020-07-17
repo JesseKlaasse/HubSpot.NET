@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using HubSpot.NET.Api.Company;
-using HubSpot.NET.Api.Contact;
+using System.Threading;
+using System.Threading.Tasks;
 using HubSpot.NET.Api.Contact.Dto;
 
 namespace HubSpot.NET.Core.Interfaces
@@ -11,15 +11,15 @@ namespace HubSpot.NET.Core.Interfaces
     public interface IHubSpotContactApi<T> : ICRUDable<T>
         where T : IHubSpotModel
     {
-        ContactListHubSpotModel<T> List(ListRequestOptions opts = null);
-        ContactListHubSpotModel<T> RecentlyCreated(ListRecentRequestOptions opts = null);
-        ContactListHubSpotModel<T> RecentlyUpdated(ListRecentRequestOptions opts = null);
-        ContactSearchHubSpotModel<T> Search(ContactSearchRequestOptions opts = null);
-        T GetByEmail(string email, bool IncludeHistory = true);
-        T GetByUserToken(string userToken, bool includeHistory = true);
-        T GetById(long contactId, bool includeHistory = true);
-        T CreateOrUpdate(T entity);
-        T CreateOrUpdate(string originalEmail, T entity);
-        void Batch(List<T> entities);
+        Task<ContactListHubSpotModel<T>> ListAsync(ListRequestOptions opts = null, CancellationToken cancellationToken = default);
+        Task<ContactListHubSpotModel<T>> RecentlyCreatedAsync(ListRecentRequestOptions opts = null, CancellationToken cancellationToken = default);
+        Task<ContactListHubSpotModel<T>> RecentlyUpdatedAsync(ListRecentRequestOptions opts = null, CancellationToken cancellationToken = default);
+        Task<ContactSearchHubSpotModel<T>> SearchAsync(ContactSearchRequestOptions opts = null, CancellationToken cancellationToken = default);
+        Task<T> GetByEmailAsync(string email, bool includeHistory = true, CancellationToken cancellationToken = default);
+        Task<T> GetByUserTokenAsync(string userToken, bool includeHistory = true, CancellationToken cancellationToken = default);
+        Task<T> GetByIdAsync(long contactId, bool includeHistory = true, CancellationToken cancellationToken = default);
+        Task<T> CreateOrUpdateAsync(T entity, CancellationToken cancellationToken = default);
+        Task<T> CreateOrUpdateAsync(string originalEmail, T entity, CancellationToken cancellationToken = default);
+        Task BatchAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
     }
 }

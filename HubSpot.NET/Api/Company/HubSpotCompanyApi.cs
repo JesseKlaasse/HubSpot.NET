@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace HubSpot.NET.Api.Company
 {
     using Flurl;
@@ -26,8 +29,8 @@ namespace HubSpot.NET.Api.Company
         /// <param name="entity">The entity</param>
         /// <returns>The created entity (with ID set)</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public CompanyHubSpotModel Create(CompanyHubSpotModel entity)
-            => _client.Execute<CompanyHubSpotModel,CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies"), entity, Method.POST);
+        public Task<CompanyHubSpotModel> CreateAsync(CompanyHubSpotModel entity, CancellationToken cancellationToken = default)
+            => _client.ExecuteAsync<CompanyHubSpotModel,CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies"), entity, Method.POST, cancellationToken);
 
         /// <summary>
         /// Gets a specific company by it's ID
@@ -35,8 +38,8 @@ namespace HubSpot.NET.Api.Company
         /// <typeparam name="T">Implementation of CompanyHubSpotModel</typeparam>
         /// <param name="companyId">The ID</param>
         /// <returns>The company entity</returns>
-        public CompanyHubSpotModel GetById(long companyId)
-            => _client.Execute<CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies", companyId.ToString()));
+        public Task<CompanyHubSpotModel> GetByIdAsync(long companyId, CancellationToken cancellationToken = default)
+            => _client.ExecuteAsync<CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies", companyId.ToString()), cancellationToken: cancellationToken);
 
         /// <summary>
         /// Gets a company by domain name
@@ -45,16 +48,16 @@ namespace HubSpot.NET.Api.Company
         /// <param name="domain">Domain name to search for</param>
         /// <param name="options">Set of search options</param>
         /// <returns>The company entity</returns>
-        public CompanySearchResultModel<CompanyHubSpotModel> GetByDomain(string domain, CompanySearchByDomain opts = null)
+        public Task<CompanySearchResultModel<CompanyHubSpotModel>> GetByDomainAsync(string domain, CompanySearchByDomain opts = null, CancellationToken cancellationToken = default)
         {
             opts = opts ?? new CompanySearchByDomain();
 
             var path = GetRoute<CompanyHubSpotModel>("domains", domain, "companies");
 
-            return _client.Execute<CompanySearchResultModel<CompanyHubSpotModel>, CompanySearchByDomain>(path, opts, Method.POST);
+            return _client.ExecuteAsync<CompanySearchResultModel<CompanyHubSpotModel>, CompanySearchByDomain>(path, opts, Method.POST, cancellationToken);
         }
 
-        public CompanyListHubSpotModel<CompanyHubSpotModel> List(ListRequestOptions opts = null)
+        public Task<CompanyListHubSpotModel<CompanyHubSpotModel>> ListAsync(ListRequestOptions opts = null, CancellationToken cancellationToken = default)
         {
             opts = opts ?? new ListRequestOptions();
 
@@ -66,7 +69,7 @@ namespace HubSpot.NET.Api.Company
             if (opts.Offset.HasValue)
                 path = path.SetQueryParam("offset", opts.Offset);
 
-            return _client.Execute<CompanyListHubSpotModel<CompanyHubSpotModel>, ListRequestOptions>(path, opts);
+            return _client.ExecuteAsync<CompanyListHubSpotModel<CompanyHubSpotModel>, ListRequestOptions>(path, opts, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -75,19 +78,19 @@ namespace HubSpot.NET.Api.Company
         /// <typeparam name="T">Implementation of CompanyHubSpotModel</typeparam>
         /// <param name="entity">The company entity</param>
         /// <returns>The updated company entity</returns>
-        public CompanyHubSpotModel Update(CompanyHubSpotModel entity)
+        public Task<CompanyHubSpotModel> UpdateAsync(CompanyHubSpotModel entity, CancellationToken cancellationToken = default)
         {
             if (entity.Id < 1)
                 throw new ArgumentException("Company entity must have an id set!");
 
-            return _client.Execute<CompanyHubSpotModel, CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies", entity.Id.ToString()), entity, Method.PUT);
+            return _client.ExecuteAsync<CompanyHubSpotModel, CompanyHubSpotModel>(GetRoute<CompanyHubSpotModel>("companies", entity.Id.ToString()), entity, Method.PUT, cancellationToken);
         }
 
         /// <summary>
         /// Deletes the given company
         /// </summary>
         /// <param name="companyId">ID of the company</param>
-        public void Delete(long companyId)
-            => _client.ExecuteOnly(GetRoute<CompanyHubSpotModel>("companies", companyId.ToString()), method: Method.DELETE);
+        public Task DeleteAsync(long companyId, CancellationToken cancellationToken = default)
+            => _client.ExecuteOnlyAsync(GetRoute<CompanyHubSpotModel>("companies", companyId.ToString()), method: Method.DELETE, cancellationToken: cancellationToken);
     }
 }
